@@ -259,13 +259,42 @@ AWS_noisy_label_detection/
 
 ---
 
-# 📷 Demo (Optional)
+## 📷 Demo
 
-* Add example images
-* Add output screenshots
-* Add suspicious samples visualization
+### 🔹 API Call
+
+```bash
+curl -X POST "http://127.0.0.1:8000/detect-noise" \
+  -F "file=@test.jpg" \
+  -F "y_tilde=3"
+```
 
 ---
+
+### 🔹 Response
+
+```json
+{
+  "noise_score": 0.9979,
+  "prob_observed_label": 0.0021,
+  "observed_label_name": "cat",
+  "predicted_label_name": "automobile"
+}
+```
+
+---
+
+### 🔹 Interpretation
+
+* The observed label (`cat`) is likely **incorrect**
+* The model predicts `automobile` with high confidence
+* Noise score ≈ **1.0 → highly suspicious label**
+
+---
+
+### 🔹 Suspicious Samples
+
+![Top Suspicious](top_suspicious.png)
 
 # 🧠 Author
 
