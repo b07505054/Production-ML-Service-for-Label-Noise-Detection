@@ -272,6 +272,7 @@ curl -X POST "http://127.0.0.1:8000/detect-noise" \
 ---
 
 ### 🔹 Response
+<img width="1575" height="844" alt="image" src="https://github.com/user-attachments/assets/c924f769-2b40-4b53-bf67-5979870cf1c6" />
 
 ```json
 {
