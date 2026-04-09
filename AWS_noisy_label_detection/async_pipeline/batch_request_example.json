@@ -1,0 +1,15 @@
+{
+  "job_id": "job-001",
+  "samples": [
+    {
+      "sample_id": "img-0001",
+      "image_url": "https://example.com/test.jpg",
+      "y_tilde": 3
+    },
+    {
+      "sample_id": "img-0002",
+      "image_url": "https://example.com/test2.jpg",
+      "y_tilde": 8
+    }
+  ]
+}
