@@ -1,11 +1,12 @@
-# 🧠 Production ML Service for Label Noise Detection
+# 🧠 Production ML System for Label Noise Detection
 
 A production-ready machine learning system for detecting noisy labels in image datasets.
-Built with PyTorch, FastAPI, Docker, and deployed on AWS ECS with a public API endpoint.
+
+Built with **PyTorch**, **FastAPI**, **Docker**, deployed on **AWS ECS (Fargate)** and **Kubernetes**, and extended with an **event-driven async pipeline (Lambda + DynamoDB)**.
 
 ---
 
-## 🚀 Live API
+# 🚀 Live API
 
 ```text
 http://noise-detector-task-balancer-102795637.us-east-1.elb.amazonaws.com
@@ -13,7 +14,7 @@ http://noise-detector-task-balancer-102795637.us-east-1.elb.amazonaws.com
 
 ---
 
-### 🔹 Health Check
+## 🔹 Health Check
 
 ```bash
 GET /health
@@ -25,13 +26,13 @@ GET /health
 
 ---
 
-### 🔹 Noise Detection API
+## 🔹 Noise Detection API
 
 ```bash
 POST /detect-noise
 ```
 
-#### Example
+### Example
 
 ```bash
 curl -X POST "http://noise-detector-task-balancer-102795637.us-east-1.elb.amazonaws.com/detect-noise" \
@@ -39,7 +40,7 @@ curl -X POST "http://noise-detector-task-balancer-102795637.us-east-1.elb.amazon
   -F "y_tilde=3"
 ```
 
-#### Response
+### Response
 
 ```json
 {
@@ -62,19 +63,12 @@ curl -X POST "http://noise-detector-task-balancer-102795637.us-east-1.elb.amazon
 ```mermaid
 flowchart LR
     A[Client Request<br>Image + y_tilde] --> B[Application Load Balancer]
-
     B --> C[ECS Fargate Service]
-
     C --> D[FastAPI App<br>/detect-noise]
-
     D --> E[Inference Layer]
-
     E --> F[PyTorch Model]
-
     F --> G[Posterior Computation]
-
     G --> H[Noise Score + Prediction]
-
     H --> I[JSON Response]
 ```
 
@@ -85,34 +79,55 @@ flowchart LR
 ```mermaid
 flowchart LR
     A[Local Dev] --> B[Docker Build]
-
     B --> C[AWS ECR]
-
     C --> D[ECS Task Definition]
-
     D --> E[ECS Fargate Service]
-
     E --> F[Application Load Balancer]
-
     F --> G[Public API Endpoint]
 ```
 
 ---
 
-## 🔷 Inference Flow
+## 🔷 Kubernetes Deployment
 
 ```mermaid
-sequenceDiagram
-    participant Client
-    participant API
-    participant Model
-
-    Client->>API: POST /detect-noise (image, y_tilde)
-    API->>Model: preprocess + forward pass
-    Model->>Model: compute posterior q(y|x)
-    Model->>API: noise score + prediction
-    API->>Client: JSON response
+flowchart LR
+    A[Client] --> B[Kubernetes Service]
+    B --> C[Deployment]
+    C --> D[Pod 1]
+    C --> E[Pod 2]
 ```
+
+Features:
+
+* Replica-based scaling
+* Built-in load balancing
+* Liveness & readiness probes
+* Self-healing pods
+
+---
+
+## 🔷 Async Data Processing Pipeline
+
+```mermaid
+flowchart LR
+    A[Batch Event] --> B[AWS Lambda]
+    B --> C[ML Inference Service<br>FastAPI]
+    C --> D[Prediction + Noise Score]
+    D --> E[DynamoDB]
+    E --> F[Query / Analysis]
+```
+
+---
+
+# ⚙️ Core Capabilities
+
+* Real-time ML inference via REST API
+* Scalable containerized deployment (Docker)
+* Cloud deployment on AWS ECS (Fargate)
+* Kubernetes orchestration (replicas, health checks, load balancing)
+* Event-driven async pipeline (Lambda + DynamoDB)
+* Dataset quality analysis via noise scoring
 
 ---
 
@@ -122,6 +137,8 @@ sequenceDiagram
 * **Backend**: FastAPI
 * **Containerization**: Docker
 * **Cloud Infrastructure**: AWS ECS (Fargate), ECR, ALB
+* **Orchestration**: Kubernetes (Deployment, Service)
+* **Async Processing**: AWS Lambda, DynamoDB
 * **Data Processing**: NumPy, PIL, Torchvision
 
 ---
@@ -166,21 +183,103 @@ docker run -p 8000:8000 noise-detector
 
 ---
 
+# ☸️ Kubernetes
+
+## Deploy
+
+```bash
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+```
+
+## Check
+
+```bash
+kubectl get pods
+kubectl get svc
+```
+
+## Port Forward
+
+```bash
+kubectl port-forward service/noise-detector-service 8000:80
+```
+
+---
+
 # ☁️ AWS Deployment
 
-## Pipeline
+Pipeline:
 
 ```text
 Docker → ECR → ECS Fargate → ALB → Public API
 ```
 
-## Key Steps
+Key steps:
 
 * Containerized ML inference service
-* Pushed versioned images to AWS ECR
-* Deployed scalable service on ECS Fargate
-* Configured Application Load Balancer + target group
-* Enabled public HTTP endpoint
+* Pushed images to AWS ECR
+* Deployed ECS Fargate service
+* Configured Application Load Balancer
+* Exposed public API endpoint
+
+---
+
+# 🔄 Async Pipeline (Lambda + DynamoDB)
+
+## Use Case
+
+For large datasets:
+
+* Trigger batch job
+* Lambda processes asynchronously
+* Calls `/detect-noise`
+* Stores results in DynamoDB
+
+---
+
+## Example Event
+
+```json
+{
+  "job_id": "job-001",
+  "samples": [
+    {
+      "sample_id": "img-0001",
+      "image_url": "https://example.com/test.jpg",
+      "y_tilde": 3
+    }
+  ]
+}
+```
+
+---
+
+## Example Record (DynamoDB)
+
+```json
+{
+  "job_id": "job-001",
+  "sample_id": "img-0001",
+  "noise_score": 0.9979,
+  "predicted_label_name": "automobile"
+}
+```
+
+---
+
+# 🧪 Testing Async Pipeline (Local Simulation)
+
+```bash
+cd async_pipeline
+python test_lambda_local.py
+```
+
+This simulates:
+
+* batch event
+* API calls
+* result generation
 
 ---
 
@@ -188,33 +287,27 @@ Docker → ECR → ECS Fargate → ALB → Public API
 
 ### 1. Docker Cache Issues
 
-* Problem: New dependencies not reflected in container
-* Solution: Forced rebuild (`--no-cache`) and used versioned image tags
+* Fixed with `--no-cache` rebuilds
 
-### 2. Missing Runtime Dependency
+### 2. Missing Dependency (NumPy)
 
-* Problem: `RuntimeError: Numpy is not available`
-* Solution: Debugged via CloudWatch logs and fixed dependency management
+* Debugged via logs and fixed runtime environment
 
-### 3. ECS Deployment Failures
+### 3. ECS Deployment Errors
 
-* Problem: IAM & service-linked role errors
-* Solution: Fixed IAM permissions and ECS roles
+* Resolved IAM and service role issues
 
 ### 4. Container Resource Limits
 
-* Problem: `no space left on device`
-* Solution: Optimized image size and resource allocation
+* Fixed storage/memory issues
 
 ### 5. Networking Issues
 
-* Problem: API unreachable
-* Solution: Configured security groups and port mappings (8000)
+* Configured security groups and ports
 
-### 6. ALB Routing
+### 6. Kubernetes Health Checks
 
-* Problem: Requests not reaching container
-* Solution: Fixed target group health check + routing
+* Implemented readiness & liveness probes
 
 ---
 
@@ -223,17 +316,18 @@ Docker → ECR → ECS Fargate → ALB → Public API
 * Probabilistic label noise detection
 * Posterior-based confidence estimation
 * Human-readable class labels
-* Fully deployed ML system (not just notebook)
-* Public API accessible via HTTP
+* Real-time + async processing support
+* Production deployment (AWS + Kubernetes)
 
 ---
 
 # 🎯 Project Highlights
 
 * Transformed research ML model into production system
-* Designed full inference pipeline
-* Built RESTful ML API
-* Deployed scalable cloud service on AWS
+* Built full inference pipeline
+* Designed both real-time and async workflows
+* Deployed on AWS and Kubernetes
+* Implemented event-driven data pipeline
 * Debugged real-world production issues
 
 ---
@@ -250,6 +344,15 @@ AWS_noisy_label_detection/
 ├── Dockerfile
 ├── README.md
 │
+├── async_pipeline/
+│   ├── lambda_handler.py
+│   ├── batch_request_example.json
+│   └── dynamodb_schema.md
+│
+├── k8s/
+│   ├── deployment.yaml
+│   └── service.yaml
+│
 ├── checkpoints/
 │   └── model.pt
 │
@@ -259,46 +362,19 @@ AWS_noisy_label_detection/
 
 ---
 
-## 📷 Demo
+# 📷 Demo
 
-### 🔹 API Call
+### API Response
 
-```bash
-curl -X POST "http://127.0.0.1:8000/detect-noise" \
-  -F "file=@test.jpg" \
-  -F "y_tilde=3"
-```
+![API Demo](top_suspicious.png)
 
 ---
-
-### 🔹 Response
-<img width="1575" height="844" alt="image" src="https://github.com/user-attachments/assets/c924f769-2b40-4b53-bf67-5979870cf1c6" />
-
-```json
-{
-  "noise_score": 0.9979,
-  "prob_observed_label": 0.0021,
-  "observed_label_name": "cat",
-  "predicted_label_name": "automobile"
-}
-```
-
----
-
-### 🔹 Interpretation
-
-* The observed label (`cat`) is likely **incorrect**
-* The model predicts `automobile` with high confidence
-* Noise score ≈ **1.0 → highly suspicious label**
-
----
-
-### 🔹 Suspicious Samples
-
-![Top Suspicious](top_suspicious.png)
 
 # 🧠 Author
 
-Built as part of a transition from research ML to production AI systems, focusing on real-world deployment and reliability.
+Built as part of a transition from research ML to production AI systems, focusing on:
 
----
+* ML system design
+* backend engineering
+* cloud deployment
+* scalable inference systems
