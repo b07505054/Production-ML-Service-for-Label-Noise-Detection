@@ -1,4 +1,4 @@
-# 🧠 Production ML System for Label Noise Detection
+#  Production ML System for Label Noise Detection
 
 A production-ready machine learning system for detecting noisy labels in image datasets.
 
@@ -6,7 +6,7 @@ Built with **PyTorch**, **FastAPI**, **Docker**, deployed on **AWS ECS (Fargate)
 
 ---
 
-# 🚀 Live API
+#  Live API
 
 ```text
 http://noise-detector-task-balancer-102795637.us-east-1.elb.amazonaws.com
@@ -14,7 +14,7 @@ http://noise-detector-task-balancer-102795637.us-east-1.elb.amazonaws.com
 
 ---
 
-## 🔹 Health Check
+##  Health Check
 
 ```bash
 GET /health
@@ -26,7 +26,7 @@ GET /health
 
 ---
 
-## 🔹 Noise Detection API
+##  Noise Detection API
 
 ```bash
 POST /detect-noise
@@ -56,9 +56,9 @@ curl -X POST "http://noise-detector-task-balancer-102795637.us-east-1.elb.amazon
 
 ---
 
-# 🧩 System Architecture
+#  System Architecture
 
-## 🔷 High-Level Architecture
+##  High-Level Architecture
 
 ```mermaid
 flowchart LR
@@ -74,7 +74,7 @@ flowchart LR
 
 ---
 
-## 🔷 Deployment Pipeline
+##  Deployment Pipeline
 
 ```mermaid
 flowchart LR
@@ -88,7 +88,7 @@ flowchart LR
 
 ---
 
-## 🔷 Kubernetes Deployment
+##  Kubernetes Deployment
 
 ```mermaid
 flowchart LR
@@ -107,7 +107,7 @@ Features:
 
 ---
 
-## 🔷 Async Data Processing Pipeline
+##  Async Data Processing Pipeline
 
 ```mermaid
 flowchart LR
@@ -120,7 +120,7 @@ flowchart LR
 
 ---
 
-# ⚙️ Core Capabilities
+#  Core Capabilities
 
 * Real-time ML inference via REST API
 * Scalable containerized deployment (Docker)
@@ -131,7 +131,7 @@ flowchart LR
 
 ---
 
-# 🏗️ Tech Stack
+#  Tech Stack
 
 * **Machine Learning**: PyTorch, Variational Inference (ELBO)
 * **Backend**: FastAPI
@@ -143,21 +143,21 @@ flowchart LR
 
 ---
 
-# ⚙️ Local Development
+#  Local Development
 
-## 1️⃣ Install dependencies
+## 1️ Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 2️⃣ Run server
+## 2️ Run server
 
 ```bash
 uvicorn app:app --reload
 ```
 
-## 3️⃣ Test locally
+## 3️ Test locally
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/detect-noise" \
@@ -167,7 +167,7 @@ curl -X POST "http://127.0.0.1:8000/detect-noise" \
 
 ---
 
-# 🐳 Docker
+#  Docker
 
 ## Build
 
@@ -183,7 +183,7 @@ docker run -p 8000:8000 noise-detector
 
 ---
 
-# ☸️ Kubernetes
+#  Kubernetes
 
 ## Deploy
 
@@ -207,7 +207,7 @@ kubectl port-forward service/noise-detector-service 8000:80
 
 ---
 
-# ☁️ AWS Deployment
+#  AWS Deployment
 
 Pipeline:
 
@@ -225,7 +225,7 @@ Key steps:
 
 ---
 
-# 🔄 Async Pipeline (Lambda + DynamoDB)
+#  Async Pipeline (Lambda + DynamoDB)
 
 ## Use Case
 
@@ -268,7 +268,7 @@ For large datasets:
 
 ---
 
-# 🧪 Testing Async Pipeline (Local Simulation)
+#  Testing Async Pipeline (Local Simulation)
 
 ```bash
 cd async_pipeline
@@ -283,7 +283,7 @@ This simulates:
 
 ---
 
-# 🛠️ Engineering Challenges & Solutions
+#  Engineering Challenges & Solutions
 
 ### 1. Docker Cache Issues
 
@@ -311,7 +311,7 @@ This simulates:
 
 ---
 
-# 📌 Key Features
+#  Key Features
 
 * Probabilistic label noise detection
 * Posterior-based confidence estimation
@@ -321,7 +321,7 @@ This simulates:
 
 ---
 
-# 🎯 Project Highlights
+#  Project Highlights
 
 * Transformed research ML model into production system
 * Built full inference pipeline
@@ -332,7 +332,7 @@ This simulates:
 
 ---
 
-# 📁 Project Structure
+#  Project Structure
 
 ```text
 AWS_noisy_label_detection/
@@ -362,7 +362,7 @@ AWS_noisy_label_detection/
 
 ---
 
-# 📷 Demo
+#  Demo
 
 ### API Response
 
@@ -370,7 +370,7 @@ AWS_noisy_label_detection/
 
 ---
 
-# 🧠 Author
+#  Author
 
 Built as part of a transition from research ML to production AI systems, focusing on:
 
